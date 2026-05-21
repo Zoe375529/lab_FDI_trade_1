@@ -47,3 +47,21 @@ sum(is.na(exports_cty_yr_clean$ALL_VAL_YR))
 
 # Preview cleaned data
 head(exports_cty_yr_clean)
+
+## Part 3: Build Top 10 list by year ----
+
+# For each year, keep only the top 10 countries by export value
+top10_exports <- exports_cty_yr_clean %>%
+  group_by(YEAR) %>%
+  slice_max(order_by = ALL_VAL_YR, n = 10, with_ties = FALSE) %>%
+  arrange(YEAR, desc(ALL_VAL_YR))
+
+# Assign a rank (1-10) within each year
+top10_exports <- top10_exports %>%
+  group_by(YEAR) %>%
+  arrange(-ALL_VAL_YR, CTY_NAME) %>%
+  mutate(rank = row_number()) %>%
+  ungroup()
+
+# Take a look
+print(top10_exports)
