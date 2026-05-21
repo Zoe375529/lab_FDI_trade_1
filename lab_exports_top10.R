@@ -119,3 +119,7 @@ print(p_2025)
 # Save as PNG
 ggsave("top10_exports_2025.png", plot = p_2025,
        width = 10, height = 6, dpi = 150)
+
+#install packages
+install.packages("gifski")
+install.packages("gganimate")
