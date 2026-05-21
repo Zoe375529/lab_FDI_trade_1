@@ -92,7 +92,7 @@ print(p_2015)
 # Save the plot as PNG
 ggsave("top10_exports_2015.png", plot = p_2015,
        width = 10, height = 6, dpi = 150)
-
+ 
 ## Part 5: Plot top 10 destinations for 2025 ----
 
 yrplot <- 2025
