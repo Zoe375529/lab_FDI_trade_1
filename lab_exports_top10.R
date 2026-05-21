@@ -92,3 +92,30 @@ print(p_2015)
 # Save the plot as PNG
 ggsave("top10_exports_2015.png", plot = p_2015,
        width = 10, height = 6, dpi = 150)
+
+## Part 5: Plot top 10 destinations for 2025 ----
+
+yrplot <- 2025
+
+p_2025 <- ggplot(top10_exports %>% filter(YEAR == yrplot),
+                 aes(group = CTY_NAME, y = rank)) +
+  geom_tile(aes(x = ALL_VAL_YR / 2,
+                width = ALL_VAL_YR,
+                height = .5,
+                color = CTY_NAME,
+                fill = CTY_NAME),
+            show.legend = FALSE) +
+  geom_text(aes(x = ALL_VAL_YR, y = rank, label = CTY_NAME),
+            nudge_x = 15, show.legend = FALSE) +
+  scale_y_reverse(breaks = 1:10, minor_breaks = NULL) +
+  labs(x = "Export Value (billions USD)",
+       y = "Ranking by Exports",
+       title = paste("Top 10 Destination Countries for U.S. Exports,", yrplot)) +
+  theme_minimal()
+
+# Display the plot
+print(p_2025)
+
+# Save as PNG
+ggsave("top10_exports_2025.png", plot = p_2025,
+       width = 10, height = 6, dpi = 150)
