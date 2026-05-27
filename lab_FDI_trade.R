@@ -392,28 +392,42 @@ ggsave("top10_exports_2025.png", plot = p_2025,
 
 ## Part 5: Animated plot by year ----
 
-
-# some bonus material you can fiddle around with
-
-#you will need to install figski or gganimate if you don't have them#
+# install packages if you don't have them
+install.packages("gifski")
+install.packages("gganimate")
 library(gifski)
-library(ggplot2)
 library(gganimate)
 
-p<-ggplot(top10_data,aes(group = CTY_NAME, y = rank)) +
-  geom_tile(aes(x = GEN_VAL_YR/2, width=GEN_VAL_YR, height=.5, color = CTY_NAME, fill = CTY_NAME),show.legend = FALSE) +
-  geom_text(aes(x = GEN_VAL_YR, y = rank, label = CTY_NAME), nudge_x=50, show.legend = FALSE) +
-  scale_y_reverse(breaks = 1:10, minor_breaks = NULL)+
-  labs(x = "Import Value (billions USD)", y = "Ranking by Imports", title = 'Top 10 Source Countries for U.S. Imports: Year {closest_state}') +
+# Build the base plot using all years of top10 data
+p_anim <- ggplot(top10_exports, aes(group = CTY_NAME, y = rank)) +
+  geom_tile(aes(x = ALL_VAL_YR / 2,
+                width = ALL_VAL_YR,
+                height = .5,
+                color = CTY_NAME,
+                fill = CTY_NAME),
+            show.legend = FALSE) +
+  geom_text(aes(x = ALL_VAL_YR, y = rank, label = CTY_NAME),
+            nudge_x = 15, show.legend = FALSE) +
+  scale_y_reverse(breaks = 1:10, minor_breaks = NULL) +
+  labs(x = "Export Value (billions USD)",
+       y = "Ranking by Exports",
+       title = 'Top 10 Destination Countries for U.S. Exports: Year {closest_state}') +
   theme_minimal()
 
-
-animated_plot <- p +
+# Add animation across YEAR
+animated_plot <- p_anim +
   transition_states(YEAR, transition_length = 2, state_length = 2, wrap = FALSE) +
-  #transition_components(time=YEAR)+
   ease_aes('linear')
 
-# Create and save the animation using gifski
-anim <- animate(animated_plot, nframes = 100, fps = 10, width = 800, height = 600, start_pause=10, end_pause = 10, renderer = gifski_renderer())
-anim_save("top10_countries_over_time.gif", animation = anim)
+# Render and save the animation
+anim <- animate(animated_plot,
+                nframes = 100,
+                fps = 10,
+                width = 800,
+                height = 600,
+                start_pause = 10,
+                end_pause = 10,
+                renderer = gifski_renderer())
 
+anim_save("top10_exports_over_time.gif", animation = anim)
+print(anim)
