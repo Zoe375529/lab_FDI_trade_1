@@ -301,9 +301,9 @@ imports_naics<-getCensus(
 ## We also want to get the country names because the numericacodes 
 # are not meaningful to non-specialists
 
-imports_cty_yr<-getCensus(
-  name = "timeseries/intltrade/imports/naics",
-  vars = c("GEN_VAL_YR","YEAR","CTY_CODE","CTY_NAME"),
+exports_cty_yr <- getCensus(
+  name = "timeseries/intltrade/exports/naics",   # imports → exports
+  vars = c("ALL_VAL_YR", "YEAR", "CTY_CODE", "CTY_NAME"),
   time = "from 2000",
   MONTH = "12",
   show_call = TRUE
