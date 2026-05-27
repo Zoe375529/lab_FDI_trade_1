@@ -12,9 +12,9 @@ rm(list = ls())
  
 # new packages we need for Census and BEA
 
-#install.packages("censusapi")
+install.packages("censusapi")
 library(censusapi)
-#install.packages('bea.R')
+install.packages('bea.R')
 library(bea.R)
 
 library(fredr)
@@ -57,7 +57,7 @@ plot2+geom_line(data=inward_stock,aes(x = date, y = value),color="blue")
 #I have my BEA key stored in my .Renviron file
 #this command tells R to go get it.
 #some of the other packages we have used check for this automatically, e.g. fredr()
-beaKey<-Sys.getenv("beaKey")
+BEA_KEY<-Sys.getenv("BEA_KEY")
 
 #Get a key here: https://apps.bea.gov/API/signup/
 #Guide is here: https://apps.bea.gov/API/bea_web_service_api_user_guide.htm
@@ -66,12 +66,12 @@ beaKey<-Sys.getenv("beaKey")
 # https://www.bea.gov/news/2023/direct-investment-country-and-industry-2022
 
 #this gives a list
-params<-beaParams(beaKey,'ITA')
+params<-beaParams(BEA_KEY,'ITA')
 #we can make it a dataframe by asking for hwere the params are stored
-params<-beaParams(beaKey,'ITA')$Parameter
+params<-beaParams(BEA_KEY,'ITA')$Parameter
 
 #what are the values of the different indicators
-indicators<-beaParamVals(beaKey,'ITA',"Indicator")
+indicators<-beaParamVals(BEA_KEY,'ITA',"Indicator")
 indicators<-indicators$ParamValue
 #we might want 
 # DiInvInwardDirectionalBasis: Financial transactions for inward direct investment (foreign d
@@ -80,7 +80,7 @@ indicators<-indicators$ParamValue
 
 #DiInvOutward: Financial transactions for outward direct investment (U.S. direc
 
-outward<-list('UserID' = beaKey,
+outward<-list('UserID' = BEA_KEY,
                  'Method' = 'GetData',
                  'DatasetName' = 'ITA',
                  'Indicator'='DiInvOutward',
@@ -93,11 +93,11 @@ outward<-beaGet(outward,asWide=FALSE)
 
 # one would then think you could get country data
 
-ctry_params<-beaParamVals(beaKey,'ITA',"AreaOrCountry")
+ctry_params<-beaParamVals(BEA_KEY,'ITA',"AreaOrCountry")
 
 ctry_params<-ctry_params$ParamValue
 
-outwardctry<-list('UserID' = beaKey,
+outwardctry<-list('UserID' = BEA_KEY,
               'Method' = 'GetData',
               'DatasetName' = 'ITA',
               'Indicator'='DiInvOutward',
@@ -116,18 +116,18 @@ outwardctry<-beaGet(outwardctry,asWide=FALSE)
 
 #Take a look at all the possible param values for MNE table#
 
-beaParams(beaKey,'MNE')
-beaParamVals(beaKey,'MNE',"DirectionOfInvestment")
-series<-beaParamVals(beaKey,'MNE',"SeriesID")
+beaParams(BEA_KEY,'MNE')
+beaParamVals(BEA_KEY,'MNE',"DirectionOfInvestment")
+series<-beaParamVals(BEA_KEY,'MNE',"SeriesID")
 series<-series$ParamValue
-beaParamVals(beaKey,'MNE',"Classification")
-beaParamVals(beaKey,'MNE',"Country")
-beaParamVals(beaKey,'MNE',"Industry")
+beaParamVals(BEA_KEY,'MNE',"Classification")
+beaParamVals(BEA_KEY,'MNE',"Country")
+beaParamVals(BEA_KEY,'MNE',"Industry")
 
 # this will give a list of each indicator but stored as a list
 
 #this gives us a list with the values inside the list
-ctrylist<-beaParamVals(beaKey,'MNE',"Country")
+ctrylist<-beaParamVals(BEA_KEY,'MNE',"Country")
 
 #we can extract the paramvalue list as follows
 
@@ -170,7 +170,7 @@ descriptions <- ctrylist %>%
 #net outstanding loans to their U.S. affiliates. It may be viewed as the direct
 #investors' net financial claims on their affiliates.
 
-replication_DI<-list('UserID' = beaKey,
+replication_DI<-list('UserID' = BEA_KEY,
                      'Method' = 'GetData',
                      'DatasetName' = 'MNE',
                      'DirectionOfInvestment'='Inward',
@@ -211,7 +211,7 @@ ggplot(data = inwardFDI, aes(x = reorder(Country, DataValue), y = DataValue, fil
 
 
 # Now try to get all inward FDI top and rank by country#
-allinward<-list('UserID' = beaKey,
+allinward<-list('UserID' = BEA_KEY,
              'Method' = 'GetData',
              'DatasetName' = 'MNE',
              'DirectionOfInvestment'='Inward',
@@ -310,7 +310,7 @@ exports_cty_yr <- getCensus(
 )
 
 
-head(imports_cty_yr)
+head(exports_cty_yr)
 
 
 # Filter out region codes and other aggregation codes
