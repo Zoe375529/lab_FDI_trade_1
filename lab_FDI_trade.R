@@ -327,32 +327,67 @@ exports_cty_yr_clean <- exports_cty_yr_clean %>%
 # Check for NAs from conversion (should be 0 or very small)
 sum(is.na(exports_cty_yr_clean$ALL_VAL_YR))
 
-#a different way to sort top 10 than we did for BEA
-#here we use slice_max
-top10_data <- imports_cty_yr_clean %>%
+# For each year, keep only the top 10 countries by export value
+top10_exports <- exports_cty_yr_clean %>%
   group_by(YEAR) %>%
-  slice_max(order_by = GEN_VAL_YR, n = 10, with_ties = FALSE) %>%
-  arrange(YEAR, desc(GEN_VAL_YR)) 
-# View the top 10 data
-print(top10_data)
+  slice_max(order_by = ALL_VAL_YR, n = 10, with_ties = FALSE) %>%
+  arrange(YEAR, desc(ALL_VAL_YR))
 
-#this assigns every country to a ranking
-#the ranking can change over time so it will depend on the year
-#how a graph ultimately looks.
-top10_data<-top10_data%>%
+# Assign a rank (1-10) within each year
+top10_exports <- top10_exports %>%
   group_by(YEAR) %>%
-  arrange(-GEN_VAL_YR, CTY_NAME) %>%
+  arrange(-ALL_VAL_YR, CTY_NAME) %>%
   mutate(rank = row_number()) %>%
   ungroup()
 
-#set the year
-yrplot<-2023
-ggplot(top10_data%>%filter(YEAR==yrplot),aes(group = CTY_NAME, y = rank)) +
-  geom_tile(aes(x = GEN_VAL_YR/2, width=GEN_VAL_YR, height=.5, color = CTY_NAME, fill = CTY_NAME),show.legend = FALSE) +
-  geom_text(aes(x = GEN_VAL_YR, y = rank, label = CTY_NAME), nudge_x=50, show.legend = FALSE) +
-  scale_y_reverse(breaks = 1:10, minor_breaks = NULL)+
-  labs(x = "Import Value (billions USD)", y = "Ranking by Imports", title = paste("Top 10 Countries for",yrplot)) +
+print(top10_exports)
+
+yrplot <- 2015
+
+p_2015 <- ggplot(top10_exports %>% filter(YEAR == yrplot),
+                 aes(group = CTY_NAME, y = rank)) +
+  geom_tile(aes(x = ALL_VAL_YR / 2,
+                width = ALL_VAL_YR,
+                height = .5,
+                color = CTY_NAME,
+                fill = CTY_NAME),
+            show.legend = FALSE) +
+  geom_text(aes(x = ALL_VAL_YR, y = rank, label = CTY_NAME),
+            nudge_x = 15, show.legend = FALSE) +
+  scale_y_reverse(breaks = 1:10, minor_breaks = NULL) +
+  labs(x = "Export Value (billions USD)",
+       y = "Ranking by Exports",
+       title = paste("Top 10 Destination Countries for U.S. Exports,", yrplot)) +
   theme_minimal()
+
+print(p_2015)
+
+# Save the plot as PNG
+ggsave("top10_exports_2015.png", plot = p_2015,
+       width = 10, height = 6, dpi = 150)
+
+yrplot <- 2025
+
+p_2025 <- ggplot(top10_exports %>% filter(YEAR == yrplot),
+                 aes(group = CTY_NAME, y = rank)) +
+  geom_tile(aes(x = ALL_VAL_YR / 2,
+                width = ALL_VAL_YR,
+                height = .5,
+                color = CTY_NAME,
+                fill = CTY_NAME),
+            show.legend = FALSE) +
+  geom_text(aes(x = ALL_VAL_YR, y = rank, label = CTY_NAME),
+            nudge_x = 15, show.legend = FALSE) +
+  scale_y_reverse(breaks = 1:10, minor_breaks = NULL) +
+  labs(x = "Export Value (billions USD)",
+       y = "Ranking by Exports",
+       title = paste("Top 10 Destination Countries for U.S. Exports,", yrplot)) +
+  theme_minimal()
+
+print(p_2025)
+
+ggsave("top10_exports_2025.png", plot = p_2025,
+       width = 10, height = 6, dpi = 150)
 
 
 ## Part 5: Animated plot by year ----
