@@ -313,18 +313,19 @@ exports_cty_yr <- getCensus(
 head(imports_cty_yr)
 
 
-#filter region and other aggregation codes#
-#takea  look at the data you can see why I do this#
-imports_cty_yr_clean <- imports_cty_yr %>%
-  filter(!(substr(CTY_CODE, 1, 1) == "0" | substr(CTY_CODE, 2, 2) == "X" | substr(CTY_CODE,1,1)=="-"))
+# Filter out region codes and other aggregation codes
+exports_cty_yr_clean <- exports_cty_yr %>%
+  filter(!(substr(CTY_CODE, 1, 1) == "0" |
+             substr(CTY_CODE, 2, 2) == "X" |
+             substr(CTY_CODE, 1, 1) == "-"))
 
-#also, the values for year and imports are not numeric
-#we want to change that and convert to billions of dollars#
-imports_cty_yr_clean <- imports_cty_yr_clean %>%
-  mutate(GEN_VAL_YR = as.numeric(GEN_VAL_YR)/1000000000,
+# Convert ALL_VAL_YR and YEAR to numeric, rescale to billions of dollars
+exports_cty_yr_clean <- exports_cty_yr_clean %>%
+  mutate(ALL_VAL_YR = as.numeric(ALL_VAL_YR) / 1000000000,
          YEAR = as.numeric(YEAR))
-# Check for possible introduction of NAs due to conversion errors
-sum(is.na(imports_cty_yr_clean$GEN_VAL_YR))
+
+# Check for NAs from conversion (should be 0 or very small)
+sum(is.na(exports_cty_yr_clean$ALL_VAL_YR))
 
 #a different way to sort top 10 than we did for BEA
 #here we use slice_max
